@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/FashionBlog/FashionBlog.iml" filepath="$PROJECT_DIR$/FashionBlog/FashionBlog.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/week_nine_sq012-ajam695.iml" filepath="$PROJECT_DIR$/.idea/week_nine_sq012-ajam695.iml" />
+    </modules>
+  </component>
+</project>
