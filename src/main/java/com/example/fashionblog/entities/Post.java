@@ -1,17 +1,20 @@
 package com.example.fashionblog.entities;
 
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 import jakarta.persistence.Entity;
 import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 //@ToString
-
+//@JsonIdentityInfo(generator= ObjectIdGenerators.PropertyGenerator.class,property="id")
 public class Post extends BaseEntity {
 
     @Column(nullable = false)
@@ -21,30 +24,34 @@ public class Post extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User user;
+   private BlogUser user;
 
-//    @OneToMany(
-//            mappedBy = "post",
-//            cascade = CascadeType.ALL,
-//            orphanRemoval = true,
-//            fetch = FetchType.LAZY
-//    )
-//    private List<PostComment> postComments = new ArrayList<>();
-//
-//    @OneToMany(
-//            mappedBy = "post",
-//            cascade = CascadeType.ALL,
-//            orphanRemoval = true,
-//            fetch = FetchType.LAZY
-//    )
-//    private List<BlogLike> blogLikes = new ArrayList<>();
+    @OneToMany(
+            mappedBy = "post",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.LAZY
+    )
+    @JsonManagedReference
+    //@JsonIgnore
+    private List<PostComment> postComments;
 
-//    @ManyToOne
-//    @JoinColumn(
-//            name= "category_id",
-//    referencedColumnName = "Id"
-//    )
-//    private PostCategory postCategory;
+    @OneToMany(
+            mappedBy = "post",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.LAZY
+    )
+    @JsonManagedReference
+    private List<BlogLike> blogLikes = new ArrayList<>();
+
+    @ManyToOne
+    @JoinColumn(
+            name= "category_id",
+    referencedColumnName = "Id"
+    )
+    @JsonBackReference
+    private PostCategory postCategory;
 }
 
 

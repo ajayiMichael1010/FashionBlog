@@ -11,7 +11,7 @@ public class ResponseManager<T> {
     }
 
     public ApiResponse error(T data){
-        ApiResponse apiResponse = new ApiResponse<>("Error",false,data);
+        ApiResponse apiResponse = new ApiResponse<T>("Error",false,data);
         return  apiResponse;
     }
 

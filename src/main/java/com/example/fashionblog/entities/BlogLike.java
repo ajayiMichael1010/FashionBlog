@@ -1,5 +1,7 @@
 package com.example.fashionblog.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -15,18 +17,20 @@ import lombok.*;
 
 public class BlogLike extends BaseEntity{
 
-//    @ManyToOne
-//    @JoinColumn(
-//            name="post_id",
-//            referencedColumnName = "Id"
-//    )
-//    private  Post post;
+    @ManyToOne
+    @JoinColumn(
+            name="post_id",
+            referencedColumnName = "Id"
+    )
+    @JsonBackReference
+    private  Post post;
 
     @ManyToOne
     @JoinColumn(
             name="comment_id",
             referencedColumnName ="Id"
     )
+    @JsonBackReference
     private PostComment postComment;
 
     @ManyToOne
@@ -34,6 +38,7 @@ public class BlogLike extends BaseEntity{
             name="user_id",
             referencedColumnName = "Id"
     )
-    private  User user;
+    @JsonBackReference
+    private  BlogUser user;
 
 }

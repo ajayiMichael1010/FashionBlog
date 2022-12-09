@@ -3,8 +3,9 @@ package com.example.fashionblog.pojos.postDtos;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.example.fashionblog.entities.Post;
 import com.example.fashionblog.entities.PostCategory;
-import com.example.fashionblog.entities.User;
+import com.example.fashionblog.entities.BlogUser;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 @Getter
@@ -18,8 +19,21 @@ public class PostUpdateRequest {
     private String title;
     @NotNull(message ="Description can't be empty")
     private String description;
-    private User user;
-    private PostCategory postCategory;
+    @NotNull(message ="Please enter a valid category Id")
+    private Long postCategoryId;
+
+    public static Post mapToPostEntity(PostUpdateRequest postUpdateRequest){
+
+        Post post= new Post();
+        post.setTitle(postUpdateRequest.getTitle());
+        post.setDescription(postUpdateRequest.getDescription());
+
+        return post;
+    }
+
+
+
+
 }
 
 

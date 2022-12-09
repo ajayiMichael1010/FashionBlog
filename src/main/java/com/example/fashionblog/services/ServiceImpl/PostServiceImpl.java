@@ -3,7 +3,7 @@ package com.example.fashionblog.services.ServiceImpl;
 import com.example.fashionblog.Security.AccessControl;
 import com.example.fashionblog.entities.Post;
 import com.example.fashionblog.entities.PostCategory;
-import com.example.fashionblog.entities.User;
+import com.example.fashionblog.entities.BlogUser;
 import com.example.fashionblog.pojos.postDtos.PostRequest;
 import com.example.fashionblog.pojos.postDtos.PostResponse;
 import com.example.fashionblog.pojos.postDtos.PostUpdateRequest;
@@ -35,44 +35,50 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public ApiResponse createPost(PostRequest postRequestDto) {
-        if(!accessControl.userFromSession().equals(null)){
-            Post post= new Post();
-            Long  userId=accessControl.userFromSession().getId();
 
-            User user = userRepository.findById(userId).orElse(null);
-            //PostCategory postCategory= postCategoryRepository.findById(Id).orElse(null);
+        if (accessControl.userFromSession()==null)
+            return responseManager.error("Please login first");
 
-            modelMapper.map(postRequestDto, post);
+        Post post = PostRequest.mapToPostEntity(postRequestDto);
 
-            post.setUser(user);
-            //post.setPostCategory(postCategory);
+        Long userId = accessControl.userFromSession().getId();
+        Long postCategoryId = postRequestDto.getPostCategoryId();
 
-            postRepository.save(post);
-        }
+        BlogUser user = userRepository.findById(userId).orElse(null);
+        PostCategory postCategory = postCategoryRepository.findById(postCategoryId).orElse(null);
+
+        post.setUser(user);
+        post.setPostCategory(postCategory);
+        postRepository.save(post);
+
         return responseManager.success("Post Created");
 
     }
 
     @Override
     public PostResponse getPostById(Long Id) {
-        //PostResponse postResponse= new PostResponse();
-        Post post=postRepository.findById(1L).get();
-        System.out.println(post);
-      // modelMapper.map(post, postResponse);
+        PostResponse postResponse= new PostResponse();
+        Post post=postRepository.findById(Id).get();
+        modelMapper.map(post, postResponse);
+        postResponse.setPostCommentCount((long) post.getPostComments().size());
+        postResponse.setPostLikeCount((long) post.getBlogLikes().size());
 
-        PostResponse postResponse=
-                PostResponse.builder()
-                        .title(post.getTitle()).description(post.getDescription()).user(post.getUser()).build();
         return postResponse;
     }
 
     @Override
     public List<PostResponse> getAllPost() {
+
         List<PostResponse> postResponses= new ArrayList<>();
 
         postRepository.findAll()
         .forEach(post -> {
-            postResponses.add(modelMapper.map(post, PostResponse.class));
+            PostResponse postResponse=new PostResponse();
+            modelMapper.map(post,postResponse);
+            postResponse.setPostCommentCount((long) post.getPostComments().size());
+            postResponse.setPostLikeCount((long) post.getBlogLikes().size());
+            postResponse.setPostComments(post.getPostComments());
+            postResponses.add(postResponse);
         });
 
         return postResponses;
@@ -80,9 +86,18 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public ApiResponse updatePost(Long Id, PostUpdateRequest postUpdateRequest) {
-        Post post= postRepository.findById(Id).orElse(null);
+
+        PostCategory postCategory= postCategoryRepository.findById(postUpdateRequest.getPostCategoryId()).get();
+
+        Post post= postRepository.findById(1L).orElse(null);
+
         modelMapper.map(postUpdateRequest,post);
+        post.setPostCategory(postCategory);
+
+        System.out.println(post);
+
         postRepository.save(post);
+
        return  responseManager.success("Post Updated Successfully");
 
     }

@@ -1,6 +1,7 @@
 package com.example.fashionblog.pojos.postDtos;
 
-import com.example.fashionblog.entities.User;
+import com.example.fashionblog.entities.Post;
+import com.example.fashionblog.entities.BlogUser;
 import lombok.*;
 
 @Getter
@@ -12,7 +13,13 @@ import lombok.*;
 public class PostRequest {
     private String title;
     private String description;
-    private User user;
-    //private PostCategory postCategory;
+    private Long postCategoryId;
+
+    public static Post mapToPostEntity(PostRequest postRequest){
+        Post post = new Post();
+        post.setTitle(postRequest.getTitle());
+        post.setDescription(postRequest.getDescription());
+        return post;
+    }
 
 }

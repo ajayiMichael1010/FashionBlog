@@ -1,9 +1,8 @@
 package com.example.fashionblog.services;
 
-import com.example.fashionblog.pojos.userDtos.UserLoginRequest;
-import com.example.fashionblog.pojos.userDtos.UserResponse;
-import com.example.fashionblog.pojos.userDtos.UserSignUpRequest;
-import com.example.fashionblog.pojos.userDtos.UserUpdateRequest;
+import com.example.fashionblog.entities.BlogUser;
+import com.example.fashionblog.pojos.commentDtos.CommentRequest;
+import com.example.fashionblog.pojos.userDtos.*;
 import com.example.fashionblog.util.ApiResponse;
 
 import java.util.List;
@@ -18,5 +17,8 @@ public interface UserService {
     UserResponse getUserProfile(Long Id);
     ApiResponse editProfile(Long userId, UserUpdateRequest request);
     ApiResponse deleteProfile(Long userId);
+    ApiResponse createUserRole(UserRoleRequest userRoleRequest);
+
+
 }
 

@@ -1,6 +1,6 @@
 package com.example.fashionblog.pojos.userDtos;
 
-import com.example.fashionblog.entities.User;
+import com.example.fashionblog.entities.BlogUser;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;

@@ -2,11 +2,9 @@ package com.example.fashionblog.services.ServiceImpl;
 
 import com.example.fashionblog.Security.AccessControl;
 import com.example.fashionblog.entities.UserRole;
-import com.example.fashionblog.entities.User;
-import com.example.fashionblog.pojos.userDtos.UserLoginRequest;
-import com.example.fashionblog.pojos.userDtos.UserResponse;
-import com.example.fashionblog.pojos.userDtos.UserSignUpRequest;
-import com.example.fashionblog.pojos.userDtos.UserUpdateRequest;
+import com.example.fashionblog.entities.BlogUser;
+import com.example.fashionblog.enums.Role;
+import com.example.fashionblog.pojos.userDtos.*;
 import com.example.fashionblog.repositories.RoleRepository;
 import com.example.fashionblog.repositories.UserRepository;
 import com.example.fashionblog.services.UserService;
@@ -15,7 +13,6 @@ import com.example.fashionblog.util.ResponseManager;
 import jakarta.servlet.http.HttpSession;
 import lombok.*;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,32 +28,31 @@ public class UserServiceImpl implements UserService {
     private  final AccessControl accessControl;
 
     @Override
-    public ApiResponse signUp(UserSignUpRequest userSignUpRequest) {
-        User user= new User();
-        UserRole role= roleRepository.findById(2L).get();//DEFAULT ROLEID FOR ALL USERS
+    public ApiResponse<String> signUp(UserSignUpRequest userSignUpRequest) {
+        BlogUser user= new BlogUser();
+        UserRole role= roleRepository.findById(2L).get();//DEFAULT ROLEID FOR ALL CUSTOMERS
         modelMapper.map(userSignUpRequest,user);
         user.setRole(role);
         userRepository.save(user);
-        return responseManager.success("User registered");
+        return responseManager.success("BlogUser registered");
     }
 
     @Override
-    public ApiResponse login(UserLoginRequest userLoginDto) {
+    public ApiResponse<String> login(UserLoginRequest userLoginDto) {
         String email=userLoginDto.getEmail();
         String password= userLoginDto.getPassword();
+        BlogUser user=userRepository.findUserByEmailAndPassword(email, password).get();
 
-        User user=userRepository.findUserByEmailAndPassword(email, password).get();
-
-        if(user.equals(null))
-           return responseManager.error("User not logged in");
+        if(user==null)
+           return responseManager.error("BlogUser not logged in");
         session.setAttribute("userDto", modelMapper.map(user,UserResponse.class));
         return  responseManager.success("Login successful");
     }
 
     @Override
-    public ApiResponse logout() {
+    public ApiResponse<String> logout() {
         session.invalidate();
-        return responseManager.success("User logged out successfully");
+        return responseManager.success("BlogUser logged out successfully");
     }
 
     @Override
@@ -64,7 +60,7 @@ public class UserServiceImpl implements UserService {
         List<UserResponse> userResponseList= new ArrayList<>();
 
         if(accessControl.isAdmin()){
-            List<User> userList= userRepository.findAll();
+            List<BlogUser> userList= userRepository.findAll();
             if(!userList.isEmpty()){
                 userList.forEach(userEntity->{
                     userResponseList.add(modelMapper.map(userEntity,UserResponse.class));
@@ -74,29 +70,36 @@ public class UserServiceImpl implements UserService {
         return userResponseList;
     }
 
-
     @Override
     public UserResponse getUserProfile(Long Id) {
         UserResponse userResponse= new UserResponse();
         if (accessControl.userFromSession()!=null) {
-            User user = userRepository.findById(Id).get();
+            BlogUser user = userRepository.findById(Id).get();
             modelMapper.map(user,userResponse);
         }
         return userResponse;
     }
 
     @Override
-    public ApiResponse editProfile(Long userId, UserUpdateRequest request) {
-        User user= userRepository.findById(userId).orElse(null);
+    public ApiResponse<String> editProfile(Long userId, UserUpdateRequest request) {
+        BlogUser user= userRepository.findById(userId).orElse(null);
         modelMapper.map(request,user);
         userRepository.save(user);
-        return responseManager.success("User updated successfully");
+        return responseManager.success("BlogUser updated successfully");
     }
 
     @Override
-    public ApiResponse deleteProfile(Long userId) {
+    public ApiResponse<String> deleteProfile(Long userId) {
         userRepository.deleteById(userId);
-        return responseManager.success("User deleted");
+        return responseManager.success("BlogUser deleted");
+    }
+
+    @Override
+    public ApiResponse createUserRole(UserRoleRequest userRoleRequest) {
+        UserRole userRole= new UserRole();
+        userRole.setRole(userRoleRequest.getRole());
+        roleRepository.save(userRole);
+        return  responseManager.success("User Role Added");
     }
 
 }

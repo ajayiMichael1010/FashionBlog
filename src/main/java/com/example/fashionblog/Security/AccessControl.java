@@ -19,14 +19,15 @@ public class AccessControl {
 
     public UserResponse userFromSession(){
         UserResponse userResponse= null;
-        if(!session.getAttribute("userDto").equals(null))
+        if(session.getAttribute("userDto")!=null)
             userResponse= (UserResponse) session.getAttribute("userDto");
         return userResponse;
     }
 
     public  boolean isAdmin(){
         boolean isPrivileged=false;
-        if(!userFromSession().equals(null)) {
+
+        if(userFromSession()!=null) {
             if (userFromSession().getUserRole().getRole().equals(Role.Admin))
                 isPrivileged = true;
         }
