@@ -16,6 +16,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @AllArgsConstructor
 @Service
@@ -41,9 +42,9 @@ public class UserServiceImpl implements UserService {
     public ApiResponse<String> login(UserLoginRequest userLoginDto) {
         String email=userLoginDto.getEmail();
         String password= userLoginDto.getPassword();
-        BlogUser user=userRepository.findUserByEmailAndPassword(email, password).get();
+       Optional<BlogUser> user=userRepository.findUserByEmailAndPassword(email, password);
 
-        if(user==null)
+        if(!user.isPresent())
            return responseManager.error("BlogUser not logged in");
         session.setAttribute("userDto", modelMapper.map(user,UserResponse.class));
         return  responseManager.success("Login successful");

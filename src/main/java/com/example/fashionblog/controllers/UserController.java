@@ -6,14 +6,14 @@ import com.example.fashionblog.util.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.extern.log4j.Log4j2;
+//import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@Log4j2
+//@Log4j2
 @Service
 @Data
 @AllArgsConstructor
@@ -29,10 +29,10 @@ public class UserController {
 
     @PostMapping("/login")
     public  ApiResponse login(@Valid @RequestBody UserLoginRequest userLoginRequest){
-        log.warn("This is a warning");
-        log.info("This is an info");
-        log.debug("A debug message");
-        log.error("Mu error","It fails");
+//        log.warn("This is a warning");
+//        log.info("This is an info");
+//        log.debug("A debug message");
+//        log.error("Mu error","It fails");
 
         return  userService.login(userLoginRequest);
     }
